@@ -1,11 +1,15 @@
 package guru.sfg.brewery.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 
 /**
  * Created by jt on 6/13/20.
@@ -13,6 +17,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -35,14 +44,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
-                .password("{noop}guru")
+                .password("{bcrypt}$2a$10$s4zu81WYZgitmNJoJLWc..xt2Oqv8YA0inAndIINPoEBUViEoUkOq")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("{noop}password")
+                .password("{sha256}090a3a8676aafd56a957381fdc1d7850557ed3e5921288a69b5aa79ced89b9ae1cb7e87d0b6c34f2")
                 .roles("USER");
 
-        auth.inMemoryAuthentication().withUser("scott").password("{noop}tiger").roles("CUSTOMER");
+        auth.inMemoryAuthentication().withUser("scott").password("{bcrypt15}$2a$15$Vgd632fEk6o1y4LfgMLv6O7IWPSBIhl81zwI3Cs7UmlTW.r0UvWF2").roles("CUSTOMER");
     }
 
     //    @Override
